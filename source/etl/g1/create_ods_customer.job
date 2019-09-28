@@ -1,0 +1,14 @@
+sqoop create-hive-table \
+--connect jdbc:mysql://10.0.15.27:3306/nshop \
+--username root \
+--password 123456 \
+--table customer \
+--hive-table nshop_rds.customer
+
+sqoop import \
+--connect jdbc:mysql://10.0.15.27:3306/nshop \
+--username root --password 123456 \
+--table customer \
+-m 1 \
+--hive-import \
+--hive-table ods_nshop.customer
