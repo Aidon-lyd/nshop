@@ -1,0 +1,32 @@
+nodes:
+  - name: job_nshop_ods2dim
+    type: command
+    config:
+      command: /bin/bash ods2dim.sh
+
+  - name: job_nshop_ods2dwd
+    type: command
+    config:
+      command: /bin/bash ods2dwd.sh
+      
+  - name: job_nshop_dwd2dws
+    type: command
+    dependsOn:
+      - job_nshop_ods2dwd
+    config:
+      command: /bin/bash dwd2dws.sh
+
+  - name: job_nshop_dws2ads
+    type: command
+    dependsOn:
+      - job_nshop_dwd2dws
+      - job_nshop_ods2dim
+    config:
+      command: /bin/bash dws2ads.sh
+
+  - name: job_nshop_ads2mysql
+    type: command
+    dependsOn:
+      - job_nshop_dws2ads
+    config:
+      command: /bin/bash ads2mysql.sh
