@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+<head>
+    <title>数据可视化</title>
+    <meta charset="utf-8">
+</head>
+<body style="height: 100%; margin: 0">
+<div id="container" style="height:600px;width: 90%;margin-top: 5px"></div>
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="echarts/echarts.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        // 基于准备好的dom，初始化echarts实例
+        var dom = document.getElementById("container");
+        var myChart = echarts.init(dom);
+        var app = {};
+        app.title = '用户最近七天学习情况可视化分析';
+        // 指定图表的配置项和数据
+        var day = [];
+        var pv = [];
+        var uv = [];
+        //数据加载完之前先显示一段简单的loading动画
+        myChart.showLoading();
+        $.ajax({
+            type: "post",
+            async: true,            //异步请求（同步请求将会锁住浏览器，用户其他操作必须等待请求完成才可以执行）
+            url: "http://localhost:8888//findFlowup",    //请求发送到dataActiont处
+            data: {},
+            dataType: "json",        //返回数据形式为json
+            success: function (result) {
+                //请求成功时执行该函数内容，result即为服务器返回的json对象
+                if (result) {
+                    var res = result.data;
+                    for (var i = 0; i < res.length; i++) {
+                        day.push(res[i].bdp_day);
+                        pv.push(res[i].pv);
+                        uv.push(res[i].uv);
+                    }
+
+                    myChart.hideLoading();    //隐藏加载动画
+                    myChart.setOption(
+                        {
+                            tooltip: {
+                                trigger: 'axis',
+                                axisPointer: {
+                                    type: 'cross',
+                                    crossStyle: {
+                                        color: '#999'
+                                    }
+                                }
+                            },
+                            toolbox: {
+                                feature: {
+                                    dataView: {show: true, readOnly: false},
+                                    magicType: {show: true, type: ['line', 'bar']},
+                                    restore: {show: true},
+                                    saveAsImage: {show: true}
+                                }
+                            },
+                            legend: {
+                                data: ['视频学习时长', '资料学习时长', '平均学习时长']
+                            },
+                            xAxis: [
+                                {
+                                    type: 'category',
+                                    data: day,
+                                    axisPointer: {
+                                        type: 'shadow'
+                                    }
+                                }
+                            ],
+                            yAxis: [
+                                {
+                                    type: 'value',
+                                    name: '用户行为指标pv',
+                                    min: 0,
+                                    max: 50000,
+                                    interval: 5000,
+                                    axisLabel: {
+                                        formatter: '{value}浏览次'
+                                    }
+                                },
+                                {
+                                    type: 'value',
+                                    name: '用户行为指标uv',
+                                    min: 0,
+                                    max: 35000,
+                                    interval: 3500,
+                                    axisLabel: {
+                                        formatter: '{value}浏览次'
+                                    }
+                                }
+                            ],
+                            series: [
+                                {
+                                    name: '用户行为指标pv',
+                                    type: 'bar',
+                                    data: pv
+                                },
+                                {
+                                    name: '用户行为指标uv',
+                                    type: 'bar',
+                                    data: uv
+                                },
+                                {
+                                    name:'用户行为指标pv',
+                                    type:'line',
+                                    yAxisIndex: 1,
+                                    data:pv
+                                },
+                                {
+                                    name:'用户行为指标uv',
+                                    type:'line',
+                                    yAxisIndex: 1,
+                                    data:uv
+                                }
+                            ]
+                        }
+                    );
+
+                }
+            },
+            error: function (errorMsg) {
+                //请求失败时执行该函数
+                alert("图表请求数据失败!");
+                myChart.hideLoading();
+            }
+        });//end ajax
+
+    });
+</script>
+</body>
+</html>

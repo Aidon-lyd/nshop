@@ -14,7 +14,6 @@
     <artifactId>nshop_server</artifactId>
     <version>1.0-SNAPSHOT</version>
 
-
     <!-- 修改项目jdk版本 -->
     <properties>
         <java.version>1.8</java.version>
