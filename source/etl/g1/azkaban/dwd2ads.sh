@@ -1,45 +1,10 @@
---导入actlog_pdtview分区数据
-set hive.exec.dynamic.partition.mode=nonstric;
-insert into dwd_nshop.actlog_pdtview
-partition(bdp_day)
-select
-customer_id user_id,
-device_num,
-device_type,
-os,
-os_version,
-manufacturer,
-carrier,
-network_type,
-area_code,
-get_json_object(extinfo,'$.target_id') target_id,
-ct,
-bdp_day
-from ods_nshop.useractlog
-where action='07' or action="08"
+#!/bin/bash
 
-
---导入ads层flowpu_stat数据
-set hive.exec.dynamic.partition.mode=nonstric;
-insert into ads_nshop.flowpu_stat
-partition(bdp_day)
-select
-uv,
-pv,
-cast(pv/uv as int) pv_age,
-bdp_day
-from(
-  select
-  count(distinct user_id) uv,
-  count(*) pv,
-  bdp_day
-  from dwd_nshop.actlog_pdtview
-  group by bdp_day
-) t;
-
--- 导入ads层platform_flow_stat数据(分天导入)
-insert into ads_nshop.platform_flow_stat
-partition(bdp_day="20190907")
+###导入ads层platform_flow_stat数据(分天导入)
+hive -e "
+set hive.exec.mode.local.auto=true;
+insert overwrite ads_nshop.platform_flow_stat
+partition(bdp_day='20190907')
 select
 customer_gender,
 qujian,
@@ -57,8 +22,8 @@ from(
   from(
     select
     customer_gender,
-    (case when age<=20 then '[0-20]段' 
-          when 21<=age and age <=23 then '[21-23]段' 
+    (case when age<=20 then '[0-20]段'
+          when 21<=age and age <=23 then '[21-23]段'
           when 24<=age and age <=26 then '[24-26]段'
           when 27<=age and age <=28 then '[27-28]段'
           when 29<=age and age <=30 then '[29-30]段'
@@ -95,7 +60,7 @@ from(
             select
             user_id
             from dwd_nshop.actlog_pdtview
-            where bdp_day="20190907"
+            where bdp_day='20190907'
             group by user_id
             having count(1)>1
           ) t11 
@@ -104,7 +69,7 @@ from(
             user_id,
             ct
             from dwd_nshop.actlog_pdtview
-            where bdp_day="20190907"
+            where bdp_day='20190907'
           ) t22 on t11.user_id=t22.user_id
         )t111
         group by user_id
@@ -117,3 +82,25 @@ from(
   group by customer_gender,qujian,customer_natives
 )p
 ;
+"
+
+###导入ads层flowpu_stat数据
+hive -e "
+set hive.exec.mode.local.auto=true;
+set hive.exec.dynamic.partition.mode=nonstric;
+insert overwrite ads_nshop.flowpu_stat
+partition(bdp_day)
+select
+uv,
+pv,
+cast(pv/uv as int) pv_age,
+bdp_day
+from(
+  select
+  count(distinct user_id) uv,
+  count(*) pv,
+  bdp_day
+  from dwd_nshop.actlog_pdtview
+  group by bdp_day
+) t;
+"

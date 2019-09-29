@@ -1,0 +1,49 @@
+nodes:
+  - name: export_ads_flowpu_stat
+  type: command
+  dependsOn:
+    - import_ads
+  config:
+    command: /bin/bash exp_ads_fs.sh  
+  
+  - name: export_ads_platform_flow_stat
+  type: command
+  dependsOn:
+    - import_ads
+  config:
+    command: /bin/bash exp_ads_pfs.sh
+
+  - name: import_ads
+  type: command
+  dependsOn:
+    - import_dwd
+  config:
+    command: /bin/bash dwd.2ads.sh
+
+  - name: import_dwd
+    type: command
+    dependsOn:
+      - import_ods_useractlog_data
+    config:
+      command: /bin/bash ods2dwd.sh 
+
+  - name: import_ods_useractlog_data
+    type: command
+    dependsOn:
+      - create_all_hivetable
+    config:
+      command: /bin/bash imp_ods_useractlog.sh
+
+  - name: import_ods_customer_data
+    type: command
+    dependsOn:
+      - create_all_hivetable
+    config:
+      command: /bin/bash import_ods_customer.sh
+    
+  - name: create_all_hivetable
+    type: command
+    config:
+      command: /bin/bash create_all_hivetable.sh
+    
+    
