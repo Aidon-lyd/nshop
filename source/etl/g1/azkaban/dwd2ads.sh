@@ -3,7 +3,7 @@
 ###导入ads层platform_flow_stat数据(分天导入)
 hive -e "
 set hive.exec.mode.local.auto=true;
-insert overwrite ads_nshop.platform_flow_stat
+insert overwrite table ads_nshop.platform_flow_stat_g1
 partition(bdp_day='20190907')
 select
 customer_gender,
@@ -59,7 +59,7 @@ from(
           from (
             select
             user_id
-            from dwd_nshop.actlog_pdtview
+            from dwd_nshop.actlog_pdtview_g1
             where bdp_day='20190907'
             group by user_id
             having count(1)>1
@@ -68,7 +68,7 @@ from(
             select
             user_id,
             ct
-            from dwd_nshop.actlog_pdtview
+            from dwd_nshop.actlog_pdtview_g1
             where bdp_day='20190907'
           ) t22 on t11.user_id=t22.user_id
         )t111
@@ -88,7 +88,7 @@ from(
 hive -e "
 set hive.exec.mode.local.auto=true;
 set hive.exec.dynamic.partition.mode=nonstric;
-insert overwrite ads_nshop.flowpu_stat
+insert overwrite table ads_nshop.flowpu_stat_g1
 partition(bdp_day)
 select
 uv,
@@ -100,7 +100,7 @@ from(
   count(distinct user_id) uv,
   count(*) pv,
   bdp_day
-  from dwd_nshop.actlog_pdtview
+  from dwd_nshop.actlog_pdtview_g1
   group by bdp_day
 ) t;
 "

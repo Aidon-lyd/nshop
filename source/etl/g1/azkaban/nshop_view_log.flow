@@ -1,31 +1,32 @@
 nodes:
-  - name: export_ads_flowpu_stat
-  type: command
-  dependsOn:
-    - import_ads
-  config:
-    command: /bin/bash exp_ads_fs.sh  
-  
-  - name: export_ads_platform_flow_stat
-  type: command
-  dependsOn:
-    - import_ads
-  config:
-    command: /bin/bash exp_ads_pfs.sh
+  - name: job_flowpu_stat
+    type: command
+    dependsOn:
+      - job_dwd2ads
+    config:
+      command: /bin/bash flowpu_stat.sh
 
-  - name: import_ads
-  type: command
-  dependsOn:
-    - import_dwd
-  config:
-    command: /bin/bash dwd.2ads.sh
+  - name: job_platform_flow_stat
+    type: command
+    dependsOn:
+      - job_dwd2ads
+    config:
+      command: /bin/bash platform_flow_stat.sh
 
-  - name: import_dwd
+  - name: job_dwd2ads
+    type: command
+    dependsOn:
+      - job_ods2dwd
+      - import_ods_customer_data
+    config:
+      command: /bin/bash dwd2ads.sh
+
+  - name: job_ods2dwd
     type: command
     dependsOn:
       - import_ods_useractlog_data
     config:
-      command: /bin/bash ods2dwd.sh 
+      command: /bin/bash ods2dwd.sh
 
   - name: import_ods_useractlog_data
     type: command
@@ -39,7 +40,7 @@ nodes:
     dependsOn:
       - create_all_hivetable
     config:
-      command: /bin/bash import_ods_customer.sh
+      command: /bin/bash imp_ods_customer.sh
     
   - name: create_all_hivetable
     type: command

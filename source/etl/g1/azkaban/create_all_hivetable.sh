@@ -1,7 +1,7 @@
 #!/bin/bash
 hive -e "create database if not exists ods_nshop;"
 
-hive -e "create external table if not exists ods_nshop.useractlog(
+hive -e "create external table if not exists ods_nshop.useractlog_g1(
 action string comment '行为类型:install安装|launch启动|interactive交
 互|page_enter_h5页面曝光|page_enter_native页面进入|exit退出',
 event_type string comment '行为类型:click点击|view浏览|slide滑动|input输入',
@@ -21,7 +21,7 @@ ct bigint comment '创建时间'
 ) partitioned by (bdp_day string)
 STORED AS TEXTFILE;"
 
-hive -e "CREATE external TABLE ods_nshop.customer(
+hive -e "CREATE external TABLE if not exists ods_nshop.customer_g1(
   customer_id string, 
   customer_login string, 
   customer_nickname string, 
@@ -40,7 +40,7 @@ stored as TEXTFILE;"
 
 hive -e "create database if not exists dwd_nshop;"
 
-hive -e "create external table if not exists dwd_nshop.actlog_pdtview(
+hive -e "create external table if not exists dwd_nshop.actlog_pdtview_g1(
 user_id string comment '用户id',
 device_num string comment '设备号',
 device_type string comment '设备类型',
@@ -56,7 +56,7 @@ ct bigint comment '产生时间'
 stored as TEXTFILE;"
 
 hive -e "create database if not exists ads_nshop;"
-hive -e "create external table if not exists ads_nshop.platform_flow_stat(
+hive -e "create external table if not exists ads_nshop.platform_flow_stat_g1(
 customer_gender int,
 age_range string ,
 customer_natives string,
@@ -65,7 +65,7 @@ visit_avg_counts int
 ) partitioned by (bdp_day string)
 stored as TEXTFILE;"
 
-hive -e "create external table if not exists ads_nshop.flowpu_stat(
+hive -e "create external table if not exists ads_nshop.flowpu_stat_g1(
 uv bigint comment '独立访客数',
 pv bigint comment '页面访客数',
 pv_avg int comment '人均页面访问数'
