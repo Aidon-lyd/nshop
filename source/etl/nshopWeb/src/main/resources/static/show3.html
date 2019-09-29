@@ -28,16 +28,18 @@
                     if (result) {
                         var res = result.data;
                         for (var i = 0; i < res.length; i++) {
-                            names.push(res[i].age_ranger);
-                            values.push(res[i].visit_avg_counts);
+                            if(res[i].customer_genger==1){
+                                names.push(res[i].age_ranger);
+                                values.push(res[i].visit_avg_counts);
+                            }
                         }
                         myChart.hideLoading();    //隐藏加载动画
                         myChart.setOption(
                             {
                                 title: {
                                     x: 'center',
-                                    text: 'ECharts例子个数统计',
-                                    subtext: 'Rainbow bar example',
+                                    text: '年龄段分布彩虹图统计',
+                                    subtext: '前锋大数据',
                                     link: 'http://echarts.baidu.com/doc/example.html'
                                 },
                                 tooltip: {
