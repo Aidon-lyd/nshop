@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>ECharts</title>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="echarts/echarts.min.js"></script>
+</head>
+
+<body>
+    <div id="main" style="width: 50%;height:600px;float: left;background-color: aqua""></div>
+    <div id="main1" style="width: 50%;height:600px;float: left;background-color: aqua"></div>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            // 基于准备好的dom，初始化echarts实例
+            var myChart = echarts.init(document.getElementById('main'));
+            // 指定图表的配置项和数据
+            var names = [];
+            var values = [];
+            //数据加载完之前先显示一段简单的loading动画
+            myChart.showLoading();
+            $.ajax({
+                type: "post",
+                async: true,            //异步请求（同步请求将会锁住浏览器，用户其他操作必须等待请求完成才可以执行）
+                url: "http://localhost:8888/findFlows",    //请求发送到dataActiont处
+                data: {},
+                dataType: "json",        //返回数据形式为json
+                success: function (result) {
+                    //请求成功时执行该函数内容，result即为服务器返回的json对象
+                    if (result) {
+                        var res = result.data;
+                        for (var i = 0; i < res.length; i++) {
+                            if(res[i].customer_genger==1){
+                                names.push(res[i].age_ranger);
+                                values.push({value:res[i].visit_avg_counts,name:res[i].age_ranger});
+                            }
+                        }
+                        console.log(names);
+                        console.log(values);
+                        myChart.hideLoading();    //隐藏加载动画
+                        myChart.setOption(
+                            {
+                                title: {
+                                    text: '男性用户访问指标',
+                                    subtext: '男性用户',
+                                    x: 'center'
+                                },
+                                tooltip: {
+                                    trigger: 'item',
+                                    formatter: "{a} <br/>{b} : {c} ({d}%)"
+                                },
+                                legend: {
+                                    orient: 'vertical',
+                                    left: 'left',
+                                    data: names
+                                },
+                                series: [
+                                    {
+                                        name: '访问来源',
+                                        type: 'pie',
+                                        radius: '55%',
+                                        center: ['50%', '60%'],
+                                        data: values,
+                                        itemStyle: {
+                                            emphasis: {
+                                                shadowBlur: 10,
+                                                shadowOffsetX: 0,
+                                                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        );
+                    }
+                },
+                error: function (errorMsg) {
+                    //请求失败时执行该函数
+                    alert("图表请求数据失败!");
+                    myChart.hideLoading();
+                }
+            });//end ajax
+
+        });
+        $(document).ready(function () {
+            // 基于准备好的dom，初始化echarts实例
+            var myChart = echarts.init(document.getElementById('main1'));
+            // 指定图表的配置项和数据
+            var names = [];
+            var values = [];
+            //数据加载完之前先显示一段简单的loading动画
+            myChart.showLoading();
+            $.ajax({
+                type: "post",
+                async: true,            //异步请求（同步请求将会锁住浏览器，用户其他操作必须等待请求完成才可以执行）
+                url: "http://localhost:8888/findFlows",    //请求发送到dataActiont处
+                data: {},
+                dataType: "json",        //返回数据形式为json
+                success: function (result) {
+                    //请求成功时执行该函数内容，result即为服务器返回的json对象
+                    if (result) {
+                        var res = result.data;
+                        for (var i = 0; i < res.length; i++) {
+                            if(res[i].customer_genger==2){
+                                names.push(res[i].age_ranger);
+                                values.push({value:res[i].visit_avg_counts,name:res[i].age_ranger});
+                            }
+                        }
+                        console.log(names);
+                        console.log(values);
+                        myChart.hideLoading();    //隐藏加载动画
+                        myChart.setOption(
+                            {
+                                title: {
+                                    text: '女性用户访问指标',
+                                    subtext: '女性用户',
+                                    x: 'center'
+                                },
+                                tooltip: {
+                                    trigger: 'item',
+                                    formatter: "{a} <br/>{b} : {c} ({d}%)"
+                                },
+                                legend: {
+                                    orient: 'vertical',
+                                    left: 'left',
+                                    data: names
+                                },
+                                series: [
+                                    {
+                                        name: '访问来源',
+                                        type: 'pie',
+                                        radius: '55%',
+                                        center: ['50%', '60%'],
+                                        data: values,
+                                        itemStyle: {
+                                            emphasis: {
+                                                shadowBlur: 10,
+                                                shadowOffsetX: 0,
+                                                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        );
+                    }
+                },
+                error: function (errorMsg) {
+                    //请求失败时执行该函数
+                    alert("图表请求数据失败!");
+                    myChart.hideLoading();
+                }
+            });//end ajax
+
+        });
+    </script>
+</body>
+
+</html>
