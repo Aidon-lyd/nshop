@@ -16,6 +16,20 @@ nodes:
     config:
       command: /bin/bash dwd2dws.sh
 
+  - name: job_nshop_dim2dwd
+    type: command
+    dependsOn:
+      - job_nshop_ods2dwd
+    config:
+      command: /bin/bash dim2dwd.sh
+
+  - name: job_nshop_dwd2ads
+    type: command
+    dependsOn:
+      - job_nshop_dim2dwd
+    config:
+      command: /bin/bash dwd2ads.sh
+
   - name: job_nshop_dws2ads
     type: command
     dependsOn:
@@ -24,9 +38,17 @@ nodes:
     config:
       command: /bin/bash dws2ads.sh
 
-  - name: job_nshop_ads2mysql
+  - name: job_nshop_ads2mysql_ads_nshop_oper_stat
+    type: command
+    dependsOn:
+      - job_nshop_dwd2ads
+    config:
+      command: /bin/bash ads2mysql_ads_nshop_oper_stat.sh
+
+  - name: job_nshop_ads2mysql_ads_nshop_risk_mgt
     type: command
     dependsOn:
       - job_nshop_dws2ads
     config:
-      command: /bin/bash ads2mysql.sh
+      command: /bin/bash ads2mysql_ads_nshop_risk_mgt.sh
+      

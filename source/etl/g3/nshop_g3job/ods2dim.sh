@@ -1,25 +1,40 @@
 
+######################################
+### 将ods层ods_nshop_02_customer抽取到
+### dim层dim_pub_customerg3
+######################################
 
+#!/bin/bash
 
-hive -e "drop table dwd_nshop.dwd_nshop_customer;"
-hadoop fs -rm -r  hdfs://hadoop:9000/user/hive/warehouse/dwd_nshop.db/dwd_nshop_customer
-hive -e "CREATE  TABLE IF NOT EXISTS dwd_nshop.dwd_nshop_customer(
-customer_id STRING,
-customer_gender STRING,
-customer_agerange STRING,
-customer_natives STRING
-);"
-
-
-
-hive -e "set hive.exec.mode.local.auto=true;
-insert overwrite table dwd_nshop.dwd_nshop_customer
+#dim_pub_customerg3_1
+hive -e "insert overwrite table dim_nshop.dim_pub_customerg3_1
 select
-c.customer_id customer_id,
-c.customer_gender customer_gender,
+customer_id,
+customer_login,
+customer_nickname,
+customer_name,
+customer_pass,
+customer_mobile,
+customer_idcard,
+customer_gender,
+case customer_birthday when '' then 20190000 else customer_birthday end as customer_birthday,
+customer_email,
+customer_natives,
+customer_ctime,
+customer_utime 
+from ods_nshop.ods_nshop_02_customer
+where length(customer_idcard) = 18
+;"
+
+#dim_pub_customerg3_2
+sql="
+insert overwrite table dim_nshop.dim_pub_customerg3_2
+select
+c.customer_id,
+c.customer_gender,
 case 
     when c.customer_birthday ='' then '0-20'
-    when substr(c.customer_birthday,1,4) >=2019 then '0-20'
+    when substr(c.customer_birthday,1,4) >2019 then '0-20'
     when substr(c.customer_birthday,1,4) between 1999 and 2019 then '0-20'
     when substr(c.customer_birthday,1,4) between 1996 and 1998 then '21-23'
     when substr(c.customer_birthday,1,4) between 1993 and 1995 then '24-26'
@@ -32,7 +47,10 @@ case
     when substr(c.customer_birthday,1,4) between 1973 and 1976 then '43-46'
     when substr(c.customer_birthday,1,4) between 1964 and 1972 then '47-56'
     when substr(c.customer_birthday,1,4) between 1953 and 1963 then '56-66'
-    when substr(c.customer_birthday,1,4) <=1953 then '66+'
-end as age_range,
-c.customer_natives customer_natives
-from dim_nshop.dim_pub_customer c;"
+    when substr(c.customer_birthday,1,4) <1953 then '66+'
+end as customer_agegroup,
+customer_natives
+from ods_nshop.ods_nshop_02_customer c
+;"
+
+hive -e "$sql"

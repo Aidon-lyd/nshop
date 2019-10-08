@@ -1,20 +1,20 @@
 
 ######################################
-### 将dwd层dwd_nshop_orders_details
-### 抽取到dws层dws_nshop_orders_details
+### 将dwd层dwd_nshop_orders_detailsg3_2
+### 抽取到dws层dws_nshop_orders_detailsg3_2
 ######################################
 
 #!/bin/bash
 
 sql="
-insert overwrite table dws_nshop.dws_nshop_orders_details partition(bdp_day='2019-09-01')
+insert overwrite table dws_nshop.dws_nshop_orders_detailsg3_2 partition(bdp_day='2019-09-01')
 select 
 od.order_id,
 od.product_code,
 od.customer_id,
 sum(case when od.order_status = 6 then 1 else 0 end) complain_num,
 sum(case when od.order_status = 8 then 1 else 0 end) cancel_complain_num
-from dwd_nshop.dwd_nshop_orders_details od
+from dwd_nshop.dwd_nshop_orders_detailsg3_2 od
 where od.bdp_day='2019-09-01'
 group by od.order_id,od.product_code,od.customer_id
 ;"
