@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>G4_可视化展示</title>
+    <!-- Bootstrap Styles-->
+
+</head>
+
+<body>
+<div id="wrapper" style="height: 1500px">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <style>
+                    #morris-pipe-chart1 {
+                        width: 80%;
+                        height: 400px;
+                    }
+                </style>
+                <div class="panel-body">
+                    <div id="morris-pipe-chart1"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <style>
+                    #morris-pipe-chart2 {
+                        width: 80%;
+                        height: 500px;
+                    }
+                </style>
+                <div class="panel-body">
+                    <div id="morris-pipe-chart2"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <style>
+                    #morris-pipe-chart3 {
+                        width: 80%;
+                        height: 400px;
+                    }
+                </style>
+                <div class="panel-body">
+                    <div id="morris-pipe-chart3"></div>
+                </div>
+            </div>
+        </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="echarts/echarts.min.js"></script>
+
+<script>
+    //地区
+    myChart3 = echarts.init(document.getElementById('morris-pipe-chart3'));
+    url3 = 'http://localhost:8888/nshop/busistat/AreaCode'
+    $.getJSON(url3, function(data) {
+        //console.log(redata)
+        myChart3.setOption({
+            title: {
+                text: '地区的影响'
+            },
+            tooltip : {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'cross',
+                    label: {
+                        backgroundColor: '#6a7985'
+                    }
+                }
+            },
+            legend: {
+                data:['交易成功订单数','交易成功金额','交易成功买家数','交易成功商品数']
+            },
+            toolbox: {
+                feature: {
+                    saveAsImage: {}
+                }
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            xAxis : [
+                {
+                    type : 'category',
+                    boundaryGap : false,
+                    data : data.data[0].地区
+                }
+            ],
+            yAxis : [
+                {
+                    type : 'value'
+                }
+            ],
+            series : [
+                {
+                    name:'交易成功订单数',
+                    type:'line',
+                    stack: '总量',
+                    areaStyle: {},
+                    data:data.data[1].交易成功订单数
+                },
+                {
+                    name:'交易成功金额',
+                    type:'line',
+                    stack: '总量',
+                    areaStyle: {},
+                    data:data.data[2].交易成功金额
+                },
+                {
+                    name:'交易成功买家数',
+                    type:'line',
+                    stack: '总量',
+                    areaStyle: {},
+                    data:data.data[3].交易成功买家数
+                },
+                {
+                    name:'交易成功商品数',
+                    type:'line',
+                    stack: '总量',
+                    areaStyle: {normal: {}},
+                    data:data.data[4].交易成功商品数
+                }
+            ]
+
+
+
+        });
+    });
+
+
+
+    //性别的图
+    myChart2 = echarts.init(document.getElementById('morris-pipe-chart2'));
+    url2 = 'http://localhost:8888/nshop/busistat/gender'
+    $.getJSON(url2, function(data) {
+        myChart2.setOption({
+            title: {
+                text: '性别的影响'
+            },
+            legend: {},
+            tooltip: {},
+            dataset: {
+                source: [
+                    ['product', '交易成功订单数', '交易成功金额', '交易成功买家数','交易成功商品数'],
+                    data.data[0].男同胞,
+                    data.data[1].女同胞
+                ]
+            },
+            xAxis: {type: 'category'},
+            yAxis: {},
+            // Declare several bar series, each will be mapped
+            // to a column of dataset.source by default.
+            series: [
+                {type: 'bar'},
+                {type: 'bar'},
+                {type: 'bar'},
+                {type: 'bar'}
+            ]
+        });
+    });
+
+    //年龄段的图
+    myChart1 = echarts.init(document.getElementById('morris-pipe-chart1'));
+    url1 = 'http://localhost:8888/nshop/busistat/ageRange'
+    $.getJSON(url1, function(data) {
+        //console.log(redata)
+        myChart1.setOption({
+            title: {
+                text: '年龄段的影响'
+            },
+            tooltip: {
+                trigger: 'axis'
+            },
+            legend: {
+                data:['交易成功订单数','交易成功金额','交易成功买家数','交易成功商品数']
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            toolbox: {
+                feature: {
+                    saveAsImage: {}
+                }
+            },
+            xAxis: {
+                type: 'category',
+                boundaryGap: false,
+                data: data.data[0].年龄段
+
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: [
+                {
+                    name:'交易成功订单数',
+                    type:'line',
+                    stack: '总量',
+                    data:data.data[1].交易成功订单数
+                },
+                {
+                    name:'交易成功金额',
+                    type:'line',
+                    stack: '总量',
+                    data:data.data[2].交易成功金额
+                },
+                {
+                    name:'交易成功买家数',
+                    type:'line',
+                    stack: '总量',
+                    data:data.data[3].交易成功买家数
+                },
+                {
+                    name:'交易成功商品数',
+                    type:'line',
+                    stack: '总量',
+                    data:data.data[4].交易成功商品数
+                }
+            ]
+
+
+
+        });
+    });
+</script>
+
+</body>
+
+</html>

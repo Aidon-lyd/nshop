@@ -1,21 +1,233 @@
 <!DOCTYPE html>
-<html style="height: 100%">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
 <head>
-    <title>数据可视化</title>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 </head>
-<body style="height: 100%; margin: 0">
-<div id="container" style="height:600px;width: 1000px;margin-top: 5px"></div>
-<script type="text/javascript" src="echarts/echarts.min.js"></script>
-<script type="text/javascript">
-    var dom = document.getElementById("container");
-    var myChart = echarts.init(dom);
-    var app = {};
-    app.title = '用户最近七天学习情况可视化分析';
-    option = {
+
+<body>
+<div id="wrapper" style="height: 1900px">
+    <style>#morris-area-chart{width: 80%;height: 410px;}</style>
+    <div class="row">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                每个年龄段的投诉量和撤销投诉量
+            </div>
+            <div class="panel-body">
+                <div id="morris-area-chart"></div>
+            </div>
+        </div>
+    </div>
+    <style>#morris-area-chart1{width: 80%;height: 410px;}</style>
+    <div class="row">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                不同性别对第二类商品的投诉量和撤销投诉量
+            </div>
+            <div class="panel-body">
+                <div id="morris-area-chart1"></div>
+            </div>
+        </div>
+    </div>
+    <style>#morris-area-chart2{width: 80%;height: 410px;}</style>
+    <div class="row">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                各年龄段男女对订单的投诉率比
+            </div>
+            <div class="panel-body">
+                <div id="morris-area-chart2"></div>
+            </div>
+        </div>
+    </div>
+    <style>#morris-area-chart3{width: 80%;height: 410px;}</style>
+    <div class="row">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                男女对第三类商品的投诉率比重
+            </div>
+            <div class="panel-body">
+                <div id="morris-area-chart3"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="echarts/echarts.min.js"></script>
+<script>
+
+    myChart=echarts.init(document.getElementById('morris-area-chart'));//获取容器
+    //先设置完其它的样式，显示一个空的直角坐标轴，然后获取数据后填入数据
+    myChart.setOption({
+        title: {
+            text: ''
+        },
+        tooltip: {},
+        legend: {
+            data:['投诉量','撤销投诉量']
+        },
+        toolbox: {
+            show: true,
+            orient: 'vertical',
+            left: 'right',
+            top: 'center',
+            feature: {
+                mark: {show: true},
+                dataView: {show: true, readOnly: false},
+                magicType: {show: true, type: ['line', 'bar', 'stack', 'tiled']},
+                restore: {show: true},
+                saveAsImage: {show: true}
+            }
+        },
+        xAxis: {
+            data: ['0-20','21-23','24-26','27-28','29-30','31-32','33-35','36-38','39-42','43-46','47-56','56-66','66+']
+        },
+        yAxis: {},
+        series: [{
+            name: '投诉量',
+            type: 'bar',
+            data: []
+        },
+            {
+                name: '撤销投诉量',
+                type: 'bar',
+                data: []
+            }]
+    });
+    var url='http://localhost:8888/nshop/risk1'
+    $.getJSON(url,function(data){
+        myChart.setOption({
+            series: [{
+                // 根据名字对应到相应的系列
+                name: '投诉量',
+
+                data: data.data[0].value
+            },
+                {
+                    name:'撤销投诉量',
+                    data:data.data[1].value
+                }]
+        });
+    });
+
+    myChart1=echarts.init(document.getElementById('morris-area-chart1'));//获取容器
+    myChart1.setOption({
+        title: {
+            text: ''
+        },
+        tooltip: {},
+        legend: {
+            data:['投诉量','撤销投诉量']
+        },
+        xAxis: {
+            data: ["男","女"]
+        },
+        yAxis: [
+            {
+                type: 'value'
+            }
+        ],
+
+        series: [{
+            name: '投诉量',
+            type: 'bar',
+            data: []
+        },
+            {
+                name: '撤销投诉量',
+                type: 'bar',
+                data: []
+            }]
+    });
+    url1='http://localhost:8888/nshop/sex1'
+    // 异步加载json格式数据
+    $.getJSON(url1,function(data){
+        //  alert()
+        myChart1.setOption({
+            /*xAxis: {
+                data: data.categories
+            },*/
+            series: [{
+                // 根据名字对应到相应的系列
+                //name: '订单数',
+                data: data.data[0].value
+            },{
+                // 根据名字对应到相应的系列
+                //name: '订单数',
+                data: data.data[1].value
+            }
+            ]
+        });
+    });
+
+    myChart2=echarts.init(document.getElementById('morris-area-chart2'));//获取容器
+    myChart2.on('updateAxisPointer', function (event) {
+        var xAxisInfo = event.axesInfo[0];
+        if (xAxisInfo) {
+            var dimension = xAxisInfo.value + 1;
+            myChart2.setOption({
+                series: {
+                    id: 'pie',
+                    label: {
+                        formatter: '{b}: {@[' + dimension + ']} ({d}%)'
+                    },
+                    encode: {
+                        value: dimension,
+                        tooltip: dimension
+                    }
+                }
+            });
+        }
+    });
+    myChart2.setOption({
+        legend: {},
+        tooltip: {
+            trigger: 'axis',
+            showContent: false
+        },
+        dataset: {
+            source: [['product','0-20','21-23','24-26','27-28','29-30','31-32','33-35','36-38','39-42','43-46','47-56','56-66','66+']]
+        },
+        xAxis: {type: 'category'},
+        yAxis: {
+            min: 0.7,
+            max: 0.9,
+            type : 'value'
+        },
+        grid: {top: '55%'},
+        series: [
+            {type: 'line', smooth: true, seriesLayoutBy: 'row'},
+            {type: 'line', smooth: true, seriesLayoutBy: 'row'},
+            {
+                type: 'pie',
+                id: 'pie',
+                radius: '30%',
+                center: ['50%', '25%'],
+                label: {
+                    formatter: '{b}: {@0-20} ({d}%)'
+                },
+                encode: {
+                    itemName: 'product',
+                    value: '0-20',
+                    tooltip: '0-20'
+                }
+            }
+        ]
+    });
+    url2='http://localhost:8888/nshop/sexAndAge1'
+    $.getJSON(url2,function(data){
+        myChart2.setOption({
+            dataset:{
+                source:[data.data[0],data.data[1],data.data[2]]
+            }
+        });
+    });
+
+    myChart3=echarts.init(document.getElementById('morris-area-chart3'));//获取容器
+    myChart3.setOption({
         title : {
-            text: '南丁格尔玫瑰图',
-            subtext: '纯属虚构',
+            text: '投诉率比重',
             x:'center'
         },
         tooltip : {
@@ -23,88 +235,44 @@
             formatter: "{a} <br/>{b} : {c} ({d}%)"
         },
         legend: {
-            x : 'center',
-            y : 'bottom',
-            data:['rose1','rose2','rose3','rose4','rose5','rose6','rose7','rose8']
+            orient: 'vertical',
+            left: 'left',
+            data: ['男','女']
         },
-        toolbox: {
-            show : true,
-            feature : {
-                mark : {show: true},
-                dataView : {show: true, readOnly: false},
-                magicType : {
-                    show: true,
-                    type: ['pie', 'funnel']
-                },
-                restore : {show: true},
-                saveAsImage : {show: true}
-            }
-        },
-        calculable : true,
         series : [
             {
-                name:'半径模式',
-                type:'pie',
-                radius : [20, 110],
-                center : ['25%', 200],
-                roseType : 'radius',
-                width: '40%',       // for funnel
-                max: 40,            // for funnel
-                itemStyle : {
-                    normal : {
-                        label : {
-                            show : false
-                        },
-                        labelLine : {
-                            show : false
-                        }
-                    },
-                    emphasis : {
-                        label : {
-                            show : true
-                        },
-                        labelLine : {
-                            show : true
-                        }
+                name: '投诉率',
+                type: 'pie',
+                radius : '55%',
+                center: ['50%', '60%'],
+                data:[
+
+                ],
+                itemStyle: {
+                    emphasis: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
                     }
-                },
-                data:[
-                    {value:10, name:'rose1'},
-                    {value:5, name:'rose2'},
-                    {value:15, name:'rose3'},
-                    {value:25, name:'rose4'},
-                    {value:20, name:'rose5'},
-                    {value:35, name:'rose6'},
-                    {value:30, name:'rose7'},
-                    {value:40, name:'rose8'}
-                ]
-            },
-            {
-                name:'面积模式',
-                type:'pie',
-                radius : [30, 110],
-                center : ['75%', 200],
-                roseType : 'area',
-                x: '50%',               // for funnel
-                max: 40,                // for funnel
-                sort : 'ascending',     // for funnel
-                data:[
-                    {value:10, name:'rose1'},
-                    {value:5, name:'rose2'},
-                    {value:15, name:'rose3'},
-                    {value:25, name:'rose4'},
-                    {value:20, name:'rose5'},
-                    {value:35, name:'rose6'},
-                    {value:30, name:'rose7'},
-                    {value:40, name:'rose8'}
-                ]
+                }
             }
         ]
-    };
-
-    if (option && typeof option === "object") {
-        myChart.setOption(option, true);
-    }
+    });
+    url3='http://localhost:8888/nshop/sex2'
+    $.getJSON(url3,function(data){
+        //  alert()
+        myChart3.setOption({
+            /*xAxis: {
+                data: data.categories
+            },*/
+            series: [{
+                // 根据名字对应到相应的系列
+                data: data.data
+            }
+            ]
+        });
+    });
 </script>
 </body>
+
 </html>
