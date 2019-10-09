@@ -60,7 +60,7 @@
 <script>
     //地区
     myChart3 = echarts.init(document.getElementById('morris-pipe-chart3'));
-    url3 = 'http://localhost:8888/nshop/busistat/AreaCode'
+    url3 = 'http://10.0.88.245:8080/nshop/busistat/AreaCode'
     $.getJSON(url3, function(data) {
         //console.log(redata)
         myChart3.setOption({
@@ -142,7 +142,7 @@
 
     //性别的图
     myChart2 = echarts.init(document.getElementById('morris-pipe-chart2'));
-    url2 = 'http://localhost:8888/nshop/busistat/gender'
+    url2 = 'http://10.0.88.245:8080/nshop/busistat/gender'
     $.getJSON(url2, function(data) {
         myChart2.setOption({
             title: {
@@ -172,7 +172,7 @@
 
     //年龄段的图
     myChart1 = echarts.init(document.getElementById('morris-pipe-chart1'));
-    url1 = 'http://localhost:8888/nshop/busistat/ageRange'
+    url1 = 'http://10.0.88.245:8080/nshop/busistat/ageRange'
     $.getJSON(url1, function(data) {
         //console.log(redata)
         myChart1.setOption({
@@ -231,7 +231,6 @@
                     data:data.data[4].交易成功商品数
                 }
             ]
-
 
 
         });

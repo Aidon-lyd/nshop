@@ -21,9 +21,9 @@
             //数据加载完之前先显示一段简单的loading动画
             myChart.showLoading();
             $.ajax({
-                type: "post",
+                type: "get",
                 async: true,            //异步请求（同步请求将会锁住浏览器，用户其他操作必须等待请求完成才可以执行）
-                url: "http://localhost:8888/nshop/findFlows",    //请求发送到dataActiont处
+                url: "http://10.0.88.245:8080/nshop/findFlows",    //请求发送到dataActiont处
                 data: {},
                 dataType: "json",        //返回数据形式为json
                 success: function (result) {
@@ -92,9 +92,9 @@
             //数据加载完之前先显示一段简单的loading动画
             myChart.showLoading();
             $.ajax({
-                type: "post",
+                type: "get",
                 async: true,            //异步请求（同步请求将会锁住浏览器，用户其他操作必须等待请求完成才可以执行）
-                url: "http://localhost:8888/nshop/findFlows",    //请求发送到dataActiont处
+                url: "http://10.0.88.245:8080/nshop/findFlows",    //请求发送到dataActiont处
                 data: {},
                 dataType: "json",        //返回数据形式为json
                 success: function (result) {
