@@ -11,7 +11,7 @@
     <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
     <div id="main" style="width: 1200px;height:600px;"></div>
     <script type="text/javascript">
-        var url = "http://localhost:8080/nshop/getSexData";
+        var url = "http://10.0.88.245:8080/nshop/getSexData";
        $.post(url,null,function(backData){
          var sexData = [];
         // 基于准备好的dom，初始化echarts实例

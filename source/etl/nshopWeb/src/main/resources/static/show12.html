@@ -20,7 +20,7 @@ var dom = document.getElementById("container");
 var myChart = echarts.init(dom);
 var app = {};
 option = null;
-var url = "http://localhost:8080/nshop/getAreaData";
+var url = "http://10.0.88.245:8080/nshop/getAreaData";
 $.post(url,null,function(backData){
  var areaData = [];
         // 基于准备好的dom，初始化echarts实例
