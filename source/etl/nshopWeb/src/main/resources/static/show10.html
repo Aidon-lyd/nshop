@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf8">
+    <title>ECharts</title>
+    <!-- 引入 echarts.js -->
+    <script src="echarts/echarts.min2.js"></script>
+    <script src="jquery/jquery.min.js"></script>
+</head>
+<body>
+    <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+    <div id="main" style="width: 1200px;height:600px;"></div>
+    <script type="text/javascript">
+     var url = "http://localhost:8888/nshop/getWayData";
+     $.post(url,null,function(backData){
+	 	var wayData = [];
+        // 基于准备好的dom，初始化echarts实例
+		 var res = backData.data;
+         for (var i = 0; i < res.length; i++) {
+              wayData.push(res[i].pay_amounts);
+         }
+	 
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('main'));
+        // 指定图表的配置项和数据
+option = {
+    title: {
+        text: '支付分布图'
+    },
+    tooltip: {},
+    radar: {
+        // shape: 'circle',
+        name: {
+            textStyle: {
+                color: '#fff',
+                backgroundColor: '#999',
+                borderRadius: 3,
+                padding: [3, 5]
+           }
+        },
+        indicator: [
+           { name: '网上银行', max: 5000000},
+           { name: '微信', max: 5000000},
+           { name: '支付宝', max: 5000000},
+           { name: '货到付款', max: 5000000}
+
+        ]
+    },
+    series: [{
+        type: 'radar',
+        // areaStyle: {normal: {}},
+        data : [
+            {
+                value : wayData,
+                name : '支付方式'
+            },
+        ]
+    }]
+};
+        myChart.setOption(option);
+       });
+    </script>
+</body>
+</html>

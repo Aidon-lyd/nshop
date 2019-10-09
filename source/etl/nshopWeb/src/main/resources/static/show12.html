@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+   <head>
+       <meta charset="utf-8">
+   </head>
+   <body style="height: 100%; margin: 0">
+       <div id="container" style="height: 100%"></div>
+       <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/echarts.min.js"></script>
+       <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts-gl/echarts-gl.min.js"></script>
+       <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts-stat/ecStat.min.js"></script>
+       <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/dataTool.min.js"></script>
+       <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/china.js"></script>
+       <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/world.js"></script>
+       <script type="text/javascript" src="https://api.map.baidu.com/api?v=2.0&ak=m5n6AzAzjQ2r2iD4jr9LVBNLet66aCM8"></script>
+       <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/bmap.min.js"></script>
+       <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/simplex.js"></script>
+       <script type="text/javascript" src="jquery/jquery.min.js"></script>
+       <script type="text/javascript">
+var dom = document.getElementById("container");
+var myChart = echarts.init(dom);
+var app = {};
+option = null;
+var url = "http://localhost:8888/nshop/getAreaData";
+$.post(url,null,function(backData){
+ var areaData = [];
+        // 基于准备好的dom，初始化echarts实例
+		 var res = backData.data;
+         for (var i = 0; i < res.length; i++) {
+              areaData.push(res[i].pay_amounts);
+         }
+var data = [
+   {name:'昆明',value:areaData[0]/3000},
+   {name:'呼和浩特',value:areaData[1]/3000},
+   {name:'北京',value:areaData[2]/3000},
+   {name:'成都',value:areaData[3]/3000},
+   {name:'银川',value:areaData[4]/3000},
+   {name:'合肥',value:areaData[5]/3000},
+   {name:'济南',value:areaData[6]/3000},
+   {name:'太原',value:areaData[7]/3000},
+   {name:'广州',value:areaData[8]/3000},
+   {name:'南宁',value:areaData[10]/3000},
+   {name:'乌鲁木齐',value:areaData[11]/3000},
+   {name:'南京',value:areaData[12]/3000},
+   {name:'南昌',value:areaData[13]/3000},
+   {name:'石家庄',value:areaData[14]/3000},
+   {name:'郑州',value:areaData[15]/3000},
+   {name:'海口',value:areaData[16]/3000},
+   {name:'武汉',value:areaData[17]/3000},
+   {name:'长沙',value:areaData[18]/3000},
+   {name:'兰州',value:areaData[19]/3000},
+   {name:'福州',value:areaData[20]/3000},
+   {name:'拉萨',value:areaData[21]/3000},
+   {name:'贵阳',value:areaData[22]/3000},
+   {name:'重庆',value:areaData[23]/3000},
+   {name:'西安',value:areaData[24]/3000},
+   {name:'西宁',value:areaData[25]/3000}
+           
+];
+var geoCoordMap = {  
+    '昆明':[102.73,25.04],
+    '呼和浩特':[111.65,40.82],
+    '北京':[116.46,39.92],
+    '成都':[104.06,30.67],
+    '银川':[106.27,38.47],
+    '合肥':[117.27,31.86],
+    '济南':[117,36.65],
+    '太原':[112.53,37.87],
+    '广州':[113.23,23.16],
+    '南宁':[108.33,22.84],
+    '乌鲁木齐':[87.68,43.77],
+    '南京':[118.78,32.04],
+    '南昌':[115.89,28.68],
+    '石家庄':[114.48,38.03],
+    '郑州':[113.65,34.76],
+    '海口':[110.35,20.02],
+    '武汉':[114.31,30.52],
+    '长沙':[113,28.21],
+    '兰州':[103.73,36.03],
+    '福州':[119.3,26.08],
+    '拉萨':[91.11,29.97],
+    '贵阳':[106.71,26.57],
+    '重庆':[106.54,29.59],
+    '西安':[108.95,34.27],
+    '西宁':[101.74,36.56],
+};
+var convertData = function (data) {
+    var res = [];
+    for (var i = 0; i < data.length; i++) {
+        var geoCoord = geoCoordMap[data[i].name];
+        if (geoCoord) {
+            res.push({
+                name: data[i].name,
+                value: geoCoord.concat(data[i].value)
+            });
+        }
+    }
+    return res;
+};
+
+option = {
+    title: {
+        text: '购物地区排名',
+        left: 'center'
+    },
+    tooltip : {
+        trigger: 'item'
+    },
+    bmap: {
+        center: [104.114129, 37.550339],
+        zoom: 5,
+        roam: true,
+        mapStyle: {
+            styleJson: [{
+                'featureType': 'water',
+                'elementType': 'all',
+                'stylers': {
+                    'color': '#d1d1d1'
+                }
+            }, {
+                'featureType': 'land',
+                'elementType': 'all',
+                'stylers': {
+                    'color': '#f3f3f3'
+                }
+            }, {
+                'featureType': 'railway',
+                'elementType': 'all',
+                'stylers': {
+                    'visibility': 'off'
+                }
+            }, {
+                'featureType': 'highway',
+                'elementType': 'all',
+                'stylers': {
+                    'color': '#fdfdfd'
+                }
+            }, {
+                'featureType': 'highway',
+                'elementType': 'labels',
+                'stylers': {
+                    'visibility': 'off'
+                }
+            }, {
+                'featureType': 'arterial',
+                'elementType': 'geometry',
+                'stylers': {
+                    'color': '#fefefe'
+                }
+            }, {
+                'featureType': 'arterial',
+                'elementType': 'geometry.fill',
+                'stylers': {
+                    'color': '#fefefe'
+                }
+            }, {
+                'featureType': 'poi',
+                'elementType': 'all',
+                'stylers': {
+                    'visibility': 'off'
+                }
+            }, {
+                'featureType': 'green',
+                'elementType': 'all',
+                'stylers': {
+                    'visibility': 'off'
+                }
+            }, {
+                'featureType': 'subway',
+                'elementType': 'all',
+                'stylers': {
+                    'visibility': 'off'
+                }
+            }, {
+                'featureType': 'manmade',
+                'elementType': 'all',
+                'stylers': {
+                    'color': '#d1d1d1'
+                }
+            }, {
+                'featureType': 'local',
+                'elementType': 'all',
+                'stylers': {
+                    'color': '#d1d1d1'
+                }
+            }, {
+                'featureType': 'arterial',
+                'elementType': 'labels',
+                'stylers': {
+                    'visibility': 'off'
+                }
+            }, {
+                'featureType': 'boundary',
+                'elementType': 'all',
+                'stylers': {
+                    'color': '#fefefe'
+                }
+            }, {
+                'featureType': 'building',
+                'elementType': 'all',
+                'stylers': {
+                    'color': '#d1d1d1'
+                }
+            }, {
+                'featureType': 'label',
+                'elementType': 'labels.text.fill',
+                'stylers': {
+                    'color': '#999999'
+                }
+            }]
+        }
+    },
+    series : [
+        {
+            name: '购物职表',
+            type: 'scatter',
+            coordinateSystem: 'bmap',
+            data: convertData(data),
+            symbolSize: function (val) {
+                return val[2] / 10;
+            },
+            label: {
+                normal: {
+                    formatter: '{b}',
+                    position: 'right',
+                    show: false
+                },
+                emphasis: {
+                    show: true
+                }
+            },
+            itemStyle: {
+                normal: {
+                    color: 'purple'
+                }
+            }
+        },
+        {
+            name: 'Top 5',
+            type: 'effectScatter',
+            coordinateSystem: 'bmap',
+            data: convertData(data.sort(function (a, b) {
+                return b.value - a.value;
+            }).slice(0, 6)),
+            symbolSize: function (val) {
+                return val[2] / 10;
+            },
+            showEffectOn: 'render',
+            rippleEffect: {
+                brushType: 'stroke'
+            },
+            hoverAnimation: true,
+            label: {
+                normal: {
+                    formatter: '{b}',
+                    position: 'right',
+                    show: true
+                }
+            },
+            itemStyle: {
+                normal: {
+                    color: 'purple',
+                    shadowBlur: 10,
+                    shadowColor: '#333'
+                }
+            },
+            zlevel: 1
+        }
+    ]
+};;
+if (option && typeof option === "object") {
+    myChart.setOption(option, true);
+}
+});
+       </script>
+   </body>
+</html>
